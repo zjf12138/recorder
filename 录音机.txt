@@ -1,0 +1,102 @@
+#include "DFRobot_VoiceRecorder.h"
+
+#define I2C_ADDRESS  (0x30)   //I2C Address    
+DFRobot_VoiceRecorder_I2C voicerecorder(&Wire, I2C_ADDRESS);
+uint8_t ledPin=13;
+uint8_t ledPin1=12;
+uint8_t hongPin=11;
+uint8_t lvPin=10;
+uint8_t huangPin=9;
+uint8_t lanPin=8;
+boolean playing = false;
+boolean playing1 = false;
+void setup() {
+  Serial.begin(115200);
+  pinMode(ledPin,INPUT);
+  pinMode(ledPin1,INPUT);
+  pinMode(hongPin,OUTPUT);
+  pinMode(lvPin,OUTPUT);
+  pinMode(huangPin,OUTPUT);
+  pinMode(lanPin,OUTPUT);
+  while (voicerecorder.begin() != 0)
+  {
+    Serial.println("i2c device number error!");
+    delay(1000);
+  }
+  Serial.println("i2c connect success!");
+}
+//bool playing=false;
+
+int val = 0;        //变量val用来储存按钮状态
+int old_val = 0;    //暂存val变量的上一个时间单位
+int state = 0;       //0表示LED关闭，1表示打开
+
+int val1 = 0;        //变量val用来储存按钮状态
+int old_val1 = 0;    //暂存val变量的上一个时间单位
+int state1 = 0;       //0表示LED关闭，1表示打开
+
+
+ void loop() { 
+  val1 = digitalRead(ledPin1); //读取按钮状态并储存
+  //检查按钮的变化情况
+  if((val1 == HIGH)&&(old_val1 == LOW)){
+    state1 =1-state1;
+    delay(40);              //延时简单抗抖动
+  }
+  old_val1 = val1;            //val已经是旧的了，暂存一下
+  
+  
+//  Serial.println("Delect Voice 0");
+  voicerecorder.setVoiceNumber(VOICE_NUMBER_2);
+ val = digitalRead(ledPin); //读取按钮状态并储存
+  //检查按钮的变化情况
+  if((val == HIGH)&&(old_val == LOW)){
+    state =1-state;
+    delay(40);              //延时简单抗抖动
+  }
+  old_val = val;            //val已经是旧的了，暂存一下
+
+  if((state==1)&&(playing==false))
+  {   
+  voicerecorder.recordvoiceStart();
+  Serial.println("开始录音1红灯亮");//显示的是红灯亮
+  playing=true;
+  digitalWrite(hongPin,HIGH);
+  digitalWrite(huangPin,LOW);
+  digitalWrite(lvPin,LOW);
+  digitalWrite(lanPin,LOW);
+  }        
+ else if((state==0)&&(playing==true))
+ {
+  playing=false;
+  voicerecorder.playVoiceStart();
+  Serial.println("开始播放2绿灯亮");//显示的是绿灯亮
+  digitalWrite(lvPin,HIGH);
+  digitalWrite(huangPin,LOW);
+  digitalWrite(hongPin,LOW);
+  digitalWrite(lanPin,LOW);
+ }
+ 
+  if((state1==1)&&(playing1==false)) 
+ {
+  voicerecorder.recordVoiceEnd();
+  Serial.println("录音结束3黄灯亮");  //显示的是黄灯亮
+  playing1=true;
+  digitalWrite(huangPin,HIGH);
+    digitalWrite(lvPin,LOW);
+  digitalWrite(hongPin,LOW);
+  digitalWrite(lanPin,LOW);
+  }
+else if((state1==0)&&(playing1==true)) 
+{
+    Serial.println("删除4蓝灯亮");//显示的是蓝灯亮
+ 
+  voicerecorder.deleteVoice();
+  playing1=false;
+  digitalWrite(lanPin,HIGH);
+      digitalWrite(lvPin,LOW);
+  digitalWrite(hongPin,LOW);
+  digitalWrite(huangPin,LOW);
+    }
+  }
+
