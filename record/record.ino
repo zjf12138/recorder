@@ -3,7 +3,6 @@
  * @version  V1.0
  * @date  2021-08-04
 */
-
 #include "DFRobot_VoiceRecorder.h"
 
 #define I2C_ADDRESS  (0x30)
