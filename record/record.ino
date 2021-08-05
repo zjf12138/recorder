@@ -34,6 +34,7 @@ void pressButton(){
 void releaseButton(){
   if((digitalRead(buttonPin)==LOW)&&(playing==true))//release the button
   {
+  voicerecorder.setVoiceNumber(VOICE_NUMBER_2);//Select Audio NO.2
   voicerecorder.playVoiceStart();
   Serial.println("play recording");
   for (int8_t n = 22; n > 0; n--)
