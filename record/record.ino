@@ -12,7 +12,7 @@ DFRobot_VoiceRecorder_I2C voicerecorder(&Wire, I2C_ADDRESS);
 uint8_t buttonPin=D9; 
 bool playing=false;
 
-void pressButton(){
+void record(){
   if((digitalRead(buttonPin)==HIGH)&&(playing==false))//When you press the button
  {
   voicerecorder.setVoiceNumber(VOICE_NUMBER_2);//Select Audio NO.2
@@ -31,7 +31,7 @@ void pressButton(){
   }
 }
 
-void releaseButton(){
+void play(){
   if((digitalRead(buttonPin)==LOW)&&(playing==true))//release the button
   {
   voicerecorder.setVoiceNumber(VOICE_NUMBER_2);//Select Audio NO.2
@@ -58,6 +58,6 @@ void setup() {
 }
 
 void loop() {
-  pressButton();
-  releaseButton();
+  record();
+  play();
 }
